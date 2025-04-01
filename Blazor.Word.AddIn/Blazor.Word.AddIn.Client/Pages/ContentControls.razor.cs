@@ -14,7 +14,7 @@ namespace Blazor.Word.AddIn.Client.Pages;
 [SupportedOSPlatform("browser")]
 public partial class ContentControls : ComponentBase
 {
-    private HostInformation hostInformation = new HostInformation();
+    private HostInformation hostInformation = new();
 
     [Inject, AllowNull]
     public IJSRuntime JSRuntime { get; set; } = default!;

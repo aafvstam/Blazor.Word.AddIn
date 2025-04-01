@@ -9,12 +9,15 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Blazor.Word.AddIn.Client.Pages;
 
+/// <summary>
+/// Starter class to demo how to insert a paragraph
+/// </summary>
 public partial class Home : ComponentBase
 {
-    private HostInformation hostInformation = new HostInformation();
+    private HostInformation hostInformation = new();
 
     [Inject, AllowNull]
-    private IJSRuntime JSRuntime { get; set; }
+    private IJSRuntime JSRuntime { get; set; } = default!;
     private IJSObjectReference JSModule { get; set; } = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,10 +38,10 @@ public partial class Home : ComponentBase
     }
 
     /// <summary>
-    /// Function to create a new slide in the Word presentation.
+    /// Basic function to invoke inserting a paragraph
     /// </summary>
-    private async Task CreateSlide() =>
-        await JSModule.InvokeVoidAsync("createSlide");
+    internal async Task InsertParagraph() =>
+        await JSModule.InvokeVoidAsync("insertParagraph");
 
 
     [JSInvokable]

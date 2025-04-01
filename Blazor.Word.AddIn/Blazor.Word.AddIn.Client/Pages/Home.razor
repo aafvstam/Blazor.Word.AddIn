@@ -25,7 +25,10 @@
         }
         else
         {
-            <FluentButton OnClick="CreateSlide" Appearance="Appearance.Accent">Say Hello World in Word!</FluentButton>
+            <FluentLabel Typo="Typography.Body" Alignment="HorizontalAlignment.Center">
+                Write some text to the Word document using JavaScript interop between Blazor and the Office JavaScript API.
+            </FluentLabel>
+            <FluentButton OnClick="InsertParagraph" Appearance="Appearance.Accent">Say Hello World in Word!</FluentButton>
         }
 
     </FluentStack>
