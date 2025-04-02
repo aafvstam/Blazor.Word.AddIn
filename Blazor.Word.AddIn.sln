@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.35806.103
+VisualStudioVersion = 17.14.35906.104
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Word.AddIn", "Blazor.Word.AddIn\Blazor.Word.AddIn\Blazor.Word.AddIn.csproj", "{0B7325D0-6932-4BB3-AB6B-D4251AB0E82E}"
 EndProject
@@ -32,6 +32,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {AD1FE789-4288-4325-BE7E-0254CF1967AA}
+		SolutionGuid = {264E724E-98C8-43F5-B951-E49EC1120E73}
 	EndGlobalSection
 EndGlobal
