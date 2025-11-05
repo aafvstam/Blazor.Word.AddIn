@@ -4,8 +4,18 @@
 ## Get latest from `dotnet new gitignore`
 
 # Blazor TS Generated JS Files
-**/pages/*.js
-**/wwwroot/*.module.js
+# Exclude all TypeScript-generated JavaScript and map files
+**/*.razor.js
+**/*.razor.js.map	
+**/Pages/*.js
+**/Pages/*.js.map
+**/Components/*.js
+**/Components/*.js.map
+**/wwwroot/**/*.js
+**/wwwroot/**/*.js.map
+
+# But keep specific JS files that are not generated
+!**/wwwroot/lib/**/*.js
 
 # dotenv files
 .env

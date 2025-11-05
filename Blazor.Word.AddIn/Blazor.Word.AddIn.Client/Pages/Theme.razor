@@ -1,14 +1,13 @@
 ﻿﻿@* Copyright (c) Maarten van Stam. All rights reserved. Licensed under the MIT License. *@
 @page "/theme"
-@rendermode InteractiveServer
-
-@using Blazor.Word.AddIn.Components.Layout
+@rendermode InteractiveAuto
 
 <PageTitle>Theme</PageTitle>
 
 <FluentStack Orientation="Orientation.Vertical"
              HorizontalAlignment="HorizontalAlignment.Center"
              VerticalAlignment="VerticalAlignment.Center">
+
     <FluentStack Orientation=Orientation.Horizontal
                  HorizontalAlignment="HorizontalAlignment.Center"
                  VerticalAlignment="VerticalAlignment.Center">
@@ -18,4 +17,5 @@
 
     <FluentLabel>Select your theme.</FluentLabel>
     <ThemeSelector />
+
 </FluentStack>

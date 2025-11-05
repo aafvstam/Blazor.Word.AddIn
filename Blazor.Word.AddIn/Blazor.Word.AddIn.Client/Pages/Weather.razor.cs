@@ -56,8 +56,13 @@ public partial class Weather : ComponentBase
     /// <summary>
     /// Function to create a new slide in the Word presentation.
     /// </summary>
-    private async Task CreateSlideButton() =>
-        await JSModule.InvokeVoidAsync("createWeatherSlide");
+    private async Task CreateTableButton()
+    {
+        if (forecasts != null)
+        {
+            await JSModule.InvokeVoidAsync("createWeatherTable", (object)forecasts);
+        }
+    }
 
     private async Task GetWeatherData()
     {
