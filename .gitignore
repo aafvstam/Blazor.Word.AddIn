@@ -6,13 +6,11 @@
 # Blazor TS Generated JS Files
 # Exclude all TypeScript-generated JavaScript and map files
 **/*.razor.js
-**/*.razor.js.map	
 **/Pages/*.js
-**/Pages/*.js.map
 **/Components/*.js
-**/Components/*.js.map
 **/wwwroot/**/*.js
-**/wwwroot/**/*.js.map
+
+**/*.js.map	
 
 # But keep specific JS files that are not generated
 !**/wwwroot/lib/**/*.js

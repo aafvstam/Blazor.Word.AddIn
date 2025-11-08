@@ -35,12 +35,21 @@
     <Touch Files="node_modules/.package-lock.stamp" AlwaysCreate="true" />
   </Target>
 
-  <!-- Only start local dev process when running (F5), controlled by RunStartLocalDev property -->
+  <!-- Only start local dev process when running (F5), controlled by RunStartLocalDev property 
   <Target Name="StartLocalDev"
           AfterTargets="Build"
           Condition="'$(RunStartLocalDev)'=='true' and '$(Configuration)'=='Debug' and '$(BuildingInsideVisualStudio)'=='true' and '$(CI)'!='true'">
     <Message Importance="high" Text="Starting local dev environment..." />
     <Exec Command="npm run start-local" />
   </Target>
-
+  -->
+  
+  <!-- Only start local dev process when running (F5), controlled by RunStartLocalDev property -->
+  <Target Name="StartLocalDev"
+          AfterTargets="Build"
+          Condition="'$(Configuration)'=='Debug' and '$(BuildingInsideVisualStudio)'=='true' and '$(CI)'!='true'">
+    <Message Importance="high" Text="Starting local dev environment..." />
+    <Exec Command="npm run start-local" WorkingDirectory="..\Blazor.Word.AddIn\" />
+  </Target>
+  
 </Project>
