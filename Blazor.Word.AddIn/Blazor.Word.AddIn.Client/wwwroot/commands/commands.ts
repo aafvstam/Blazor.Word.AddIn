@@ -1,16 +1,17 @@
-﻿/*
+﻿/**
  * Copyright (c) Maarten van Stam. All rights reserved. Licensed under the MIT license.
  * See LICENSE in the project root for license information.
  */
-
 console.log("Loading command.js");
 
 /**
- * Function to run Office JavaScript without any Interop.
- * @param event
+ * Inserts "Hello World" text at the end of the Word document body.
+ * This function demonstrates basic Office JavaScript API usage without Blazor interop.
+ * 
+ * @param event - The Office add-in command event object
+ * @returns A promise that resolves when the text insertion is complete
  */
-async function insertTextInWord(event: Office.AddinCommands.Event) {
-
+async function insertTextInWord(event: Office.AddinCommands.Event): Promise<void> {
   console.log("In insertTextInWord");
 
   try {
@@ -19,98 +20,110 @@ async function insertTextInWord(event: Office.AddinCommands.Event) {
       body.insertText("Hello World", Word.InsertLocation.end);
       await context.sync();
     });
-  } catch (error: any) {
-    console.error(error);
-  }
-  finally {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error in insertTextInWord:", errorMessage);
+  } finally {
     console.log("Finish insertTextInWord");
   }
 
   // Be sure to indicate when the add-in command function is complete
-  event.completed();
+  if (event && typeof event.completed === 'function') {
+    event.completed();
+  }
 }
 
 /**
- * Writes the text from the Home Blazor Page to the Word slide
- * @param {any} event
+ * Writes the text from the Home Blazor Page to the Word document.
+ * This function invokes a .NET method through Blazor interop to retrieve content
+ * from the Home page and insert it into the Word document.
+ * 
+ * @param event - The Office add-in command event object
+ * @returns A promise that resolves when the operation is complete
  */
-async function callBlazorOnHome(event: Office.AddinCommands.Event) {
+async function callBlazorOnHome(event: Office.AddinCommands.Event): Promise<void> {
 
-  // Implement your custom code here. The following code is a simple Word example.  
   try {
+    
     console.log("Running callBlazorOnHome");
-
-    console.log("Before callStaticLocalComponentMethodinit");
     await callStaticLocalComponentMethodinit("SayHelloHome");
-    console.log("After callStaticLocalComponentMethodinit");
-  }
-  catch (error: any) {
-    // Note: In a production add-in, notify the user through your add-in's UI.
-    console.error(error);
-  }
-  finally {
+
+  } catch (error) {
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error in callBlazorOnHome:", errorMessage);
+
+  } finally {
+    
     console.log("Finish callBlazorOnHome");
   }
 
   // Calling event.completed is required. event.completed lets the platform know that processing has completed.
-  event.completed();
+  if (event && typeof event.completed === 'function') {
+    event.completed();
+  }
 }
 
 /**
- * Writes the text from the Counter Blazor Page to the Word slide
- * @param {any} event
+ * Writes the text from the Counter Blazor Page to the Word document.
+ * This function invokes a .NET method through Blazor interop to retrieve content
+ * from the Counter page and insert it into the Word document.
+ * 
+ * @param event - The Office add-in command event object
+ * @returns A promise that resolves when the operation is complete
  */
-async function callBlazorOnCounter(event: Office.AddinCommands.Event) {
-
-  // Implement your custom code here. The following code is a simple Word example.  
+async function callBlazorOnCounter(event: Office.AddinCommands.Event): Promise<void> {
   try {
-    console.log("Running callBlazorOnHome");
-
-    console.log("Before callStaticLocalComponentMethodinit");
+    
+    console.log("Running callBlazorOnCounter");
     await callStaticLocalComponentMethodinit("SayHelloCounter");
-    console.log("After callStaticLocalComponentMethodinit");
-  }
-  catch (error: any) {
-    // Note: In a production add-in, notify the user through your add-in's UI.
-    console.error(error);
-  }
-  finally {
+
+  } catch (error) {
+
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error in callBlazorOnCounter:", errorMessage);
+
+  } finally {
+    
     console.log("Finish callBlazorOnCounter");
   }
 
   // Calling event.completed is required. event.completed lets the platform know that processing has completed.
-  event.completed();
+  if (event && typeof event.completed === 'function') {
+    event.completed();
+  }
 }
 
 /**
  * Checks if the .NET runtime is loaded and invokes a .NET method to retrieve a string.
- * The string is then inserted into a Word slide as a text box.
- * and some format is added to the text box.
+ * The string is then inserted into the Word document body at the end.
  * 
  * @param {string} methodname - The name of the .NET method to invoke.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
  */
-async function callStaticLocalComponentMethodinit(methodname: string) {
+async function callStaticLocalComponentMethodinit(methodname: string): Promise<void> {
+  
   console.log("In callStaticLocalComponentMethodinit");
 
   try {
     let name = "Initializing";
 
     try {
-
-      var dotnetloaded = await preloadDotNet();
+      const dotnetloaded = await preloadDotNet();
 
       if (dotnetloaded === true) {
         // Call JSInvokable Function here ...
         name = await DotNet.invokeMethodAsync(
           "Blazor.Word.AddIn.Client",
           methodname,
-          "Blazor Fan");
-      }
-      else {
+          "Blazor Fan"
+        );
+      } else {
         name = "Init DotNet Failed";
       }
-    } catch (error: any) {
-      name = error.message;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      name = errorMessage;
       console.error("Error during DotNet invocation: " + name);
     }
 
@@ -120,12 +133,11 @@ async function callStaticLocalComponentMethodinit(methodname: string) {
       await context.sync();
     });
 
-    console.log("Finished Initializing: " + name)
-  }
-  catch (error: any) {
-    console.error(error);
-  }
-  finally {
+    console.log("Finished Initializing: " + name);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error in callStaticLocalComponentMethodinit:", errorMessage);
+  } finally {
     console.log("Finish callStaticLocalComponentMethodinit");
   }
 }
@@ -139,43 +151,90 @@ async function callStaticLocalComponentMethodinit(methodname: string) {
  * This won't be necessary if the task pane is automatically opened when the add-in is loaded.
  * Also feel it should be possible to preload in the module.ts file for a guaranteed load.
  *
- * @returns result - Returns true if the .NET runtime is successfully loaded, otherwise false.
+ * @returns {Promise<boolean>} Returns true if the .NET runtime is successfully loaded, otherwise false.
  */
-async function preloadDotNet() {
-
+async function preloadDotNet(): Promise<boolean> {
   console.log("In preloadDotNet");
 
   try {
     console.log("Before DotNet.invokeMethodAsync");
-    var result = "";
+    let result = "";
 
+    // Attempt to invoke the dummy method up to 5 times
     let attempts = 0;
-    while (result === "" && attempts < 5) {
+    const maxAttempts = 5;
+    const retryDelayMs = 1000;
+
+    while (result === "" && attempts < maxAttempts) {
       try {
+        // Wait before retry (skip on first attempt)
         if (attempts > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
         }
+
+        // Attempt to invoke the PreloaderDummy method
         result = await DotNet.invokeMethodAsync(
           "Blazor.Word.AddIn.Client",
           "PreloaderDummy"
         );
-      } catch (error: any) {
-        console.error("Error during DotNet invocation: " + error.message);
+
+        console.log(result);
+
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error("Error during DotNet invocation: " + errorMessage);
       }
+
       attempts++;
     }
 
     console.log("After DotNet.invokeMethodAsync");
-    return result === "Loaded" ? true : false;
+    return result === "Loaded";
 
-  } catch (error: any) {
-
-    console.log("Error call : " + error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.log("Error call: " + errorMessage);
     return false;
 
   } finally {
-
     console.log("Finish preloadDotNet");
+  }
+}
+
+/**
+ * Calls the PrepareDocument method from ContentControls Blazor Page
+ * @param event Office add-in command event
+ * @returns A promise that resolves when the document preparation is complete
+ */
+async function callBlazorPrepareDocument(event: Office.AddinCommands.Event): Promise<void> {
+  try {
+    console.log("Running callBlazorPrepareDocument");
+
+    // Ensure .NET runtime is loaded
+    const dotnetloaded = await preloadDotNet();
+
+    console.log( "Running callBlazorPrepareDocument, preload: " + dotnetloaded);
+
+    if (dotnetloaded === true) {
+      // Call the JSInvokable PrepareDocument method
+      await DotNet.invokeMethodAsync(
+        "Blazor.Word.AddIn.Client",
+        "PrepareDocument"
+      );
+      console.log("PrepareDocument completed successfully");
+    } else {
+      console.error("Init DotNet Failed");
+    }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Error calling PrepareDocument:", errorMessage);
+  } finally {
+    console.log("Finish callBlazorPrepareDocument");
+
+    // Required: Let the platform know processing has completed
+    if (event && typeof event.completed === 'function') {
+      event.completed();
+    }
   }
 }
 
@@ -183,3 +242,4 @@ async function preloadDotNet() {
 Office.actions.associate("insertTextInWord", insertTextInWord);
 Office.actions.associate("callBlazorOnHome", callBlazorOnHome);
 Office.actions.associate("callBlazorOnCounter", callBlazorOnCounter);
+Office.actions.associate("callBlazorPrepareDocument", callBlazorPrepareDocument);

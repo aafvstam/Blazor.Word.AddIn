@@ -35,21 +35,16 @@
     <Touch Files="node_modules/.package-lock.stamp" AlwaysCreate="true" />
   </Target>
 
-  <!-- Only start local dev process when running (F5), controlled by RunStartLocalDev property 
-  <Target Name="StartLocalDev"
-          AfterTargets="Build"
-          Condition="'$(RunStartLocalDev)'=='true' and '$(Configuration)'=='Debug' and '$(BuildingInsideVisualStudio)'=='true' and '$(CI)'!='true'">
-    <Message Importance="high" Text="Starting local dev environment..." />
-    <Exec Command="npm run start-local" />
-  </Target>
+  <!-- 
+  Only run npm start-local when in Debug configuration and building inside Visual Studio (F5)
+  There is no option to only check on actually running the project, so we approximate this by checking if building inside Visual Studio in Debug configuration.
   -->
-  
-  <!-- Only start local dev process when running (F5), controlled by RunStartLocalDev property -->
-  <Target Name="StartLocalDev"
-          AfterTargets="Build"
-          Condition="'$(Configuration)'=='Debug' and '$(BuildingInsideVisualStudio)'=='true' and '$(CI)'!='true'">
-    <Message Importance="high" Text="Starting local dev environment..." />
-    <Exec Command="npm run start-local" WorkingDirectory="..\Blazor.Word.AddIn\" />
+  <Target Name="StartLocalDev" AfterTargets="Build">
+    <Message Importance="high" Text="Skipping Run Start Local: Configuration=$(Configuration), Building Inside VisualStudio=$(BuildingInsideVisualStudio), CI=$(CI)"
+             Condition="'$(Configuration)'!='Debug' or '$(BuildingInsideVisualStudio)'!='true' or '$(CI)'=='true'" />
+    
+    <Exec Command="npm run start-local" 
+          Condition="'$(Configuration)'=='Debug' and '$(BuildingInsideVisualStudio)'=='true' and '$(CI)'!='true'" />
   </Target>
   
 </Project>

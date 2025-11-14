@@ -16,6 +16,7 @@ public partial class Counter : ComponentBase
     [JSInvokable]
     public static Task<string> SayHelloCounter(string name)
     {
+        Console.WriteLine($"Invoking SayHelloCounter {name}");
         return Task.FromResult($"Hello Home, {name} from Counter Page!");
     }
 }

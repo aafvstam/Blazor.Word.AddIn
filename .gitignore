@@ -10,7 +10,7 @@
 **/Components/*.js
 **/wwwroot/**/*.js
 
-**/*.js.map	
+**/*.js.map
 
 # But keep specific JS files that are not generated
 !**/wwwroot/lib/**/*.js

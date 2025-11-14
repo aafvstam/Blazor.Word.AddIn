@@ -321,6 +321,26 @@
                     <FunctionName>callBlazorOnHome</FunctionName>
                   </Action>
                 </Control>
+
+                <Control xsi:type="Button" id="Contoso.FunctionButton2">
+                  <Label resid="Contoso.FunctionButton2.Label" />
+                  <Supertip>
+                    <!-- ToolTip title. resid must point to a ShortString resource. -->
+                    <Title resid="Contoso.FunctionButton2.Label" />
+                    <!-- ToolTip description. resid must point to a LongString resource. -->
+                    <Description resid="Contoso.FunctionButton2.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Contoso.tpicon_16x16" />
+                    <bt:Image size="32" resid="Contoso.tpicon_32x32" />
+                    <bt:Image size="80" resid="Contoso.tpicon_80x80" />
+                  </Icon>
+
+                  <!-- This is what happens when the command is triggered (E.g. click on the Ribbon). Supported actions are ExecuteFunction or ShowTaskpane. -->
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>callBlazorPrepareDocument</FunctionName>
+                  </Action>
+                </Control>
               </Group>
               <Label resid="Contoso.CustomTabLabel"/>
             </CustomTab>
@@ -366,6 +386,7 @@
         <bt:String id="Contoso.Taskpane.CC.Label" DefaultValue="Content Controls" />
 
         <bt:String id="Contoso.FunctionButton0.Label" DefaultValue="Insert Text" />
+        <bt:String id="Contoso.FunctionButton2.Label" DefaultValue="Prepare Document from ContentControls" />
         <bt:String id="Contoso.FunctionButton3.Label" DefaultValue="Insert Name from Counter" />
         <bt:String id="Contoso.FunctionButton4.Label" DefaultValue="Insert Name from Home" />
       </bt:ShortStrings>
@@ -381,6 +402,7 @@
         <bt:String id="Contoso.Taskpane.CC.Tooltip" DefaultValue="Click to Show Content Controls Taskpane" />
 
         <bt:String id="Contoso.FunctionButton0.Tooltip" DefaultValue="Click to insert text in slide" />
+        <bt:String id="Contoso.FunctionButton2.Tooltip" DefaultValue="Click to Prepare Document" />
         <bt:String id="Contoso.FunctionButton3.Tooltip" DefaultValue="Click to do something" />
         <bt:String id="Contoso.FunctionButton4.Tooltip" DefaultValue="Click to insert name from Home" />
       </bt:LongStrings>

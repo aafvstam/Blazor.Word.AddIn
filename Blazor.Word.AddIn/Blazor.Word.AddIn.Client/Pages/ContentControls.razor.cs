@@ -1,100 +1,82 @@
 ﻿/* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
-using Blazor.Word.AddIn.Client.Model;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Blazor.Word.AddIn.Client.Pages;
 
 [SupportedOSPlatform("browser")]
 public partial class ContentControls : ComponentBase
 {
-    private HostInformation hostInformation = new();
+    private bool HostInformation;
 
-    [Inject, AllowNull]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-    public IJSObjectReference JSModule { get; set; } = default!;
+    [JSImport("IsRunningInHost", "ContentControls")]
+    internal static partial Task<bool> OfficeOnReady();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            hostInformation = await JSRuntime.InvokeAsync<HostInformation>("Office.onReady");
+            try
+            {
+                await JSHost.ImportAsync("ContentControls", "../Pages/ContentControls.razor.js");
+                Console.WriteLine($"Imported ContentControls module");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error importing ContentControls module: {ex.Message}");
+            }
 
-            Debug.WriteLine("Hit OnAfterRenderAsync in ContentControls.razor.cs!");
-            Console.WriteLine("Hit OnAfterRenderAsync in ContentControls.razor.cs in Console!");
-            JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/ContentControls.razor.js");
-
-            if (hostInformation.IsInitialized)
+            HostInformation = await OfficeOnReady();
+            
+            if (HostInformation)
             {
                 StateHasChanged();
             }
         }
     }
 
-    /// <summary>
-    /// Invoke JavaScript function to set up the document (insert a couple of paragraphs).
-    /// </summary>
-    internal async Task Setup() =>
-        await JSModule.InvokeVoidAsync("setupDocument");
+    // Use static JSImport methods directly
+    internal static Task Setup() => SetupDocument();
+    internal static Task InsertContentControls() => InsertContentControlsFunction();
+    internal static Task TagContentControls() => TagContentControlsFunction();
+    internal static Task ModifyContentControls() => ModifyContentControlsFunction();
+    internal static Task RegisterContentControlsEvents() => RegisterContentControlsFunction();
+    internal static Task DeregisterContentControlEvents() => DeregisterContentControlsFunction();
+    internal static Task DeleteContentControl() => DeleteContentControlFunction();
 
-    /// <summary>
-    /// Invoke JavaScript function to surround the Paragraphs with content controls.
-    /// </summary>
-    internal async Task InsertContentControls() =>
-        await JSModule.InvokeVoidAsync("insertContentControls");
-
-    /// <summary>
-    /// Invoke JavaScript function to tag the content controls with "odd" or "even" tags.
-    /// </summary>
-    internal async Task TagContentControls() =>
-        await JSModule.InvokeVoidAsync("tagContentControls");
-
-    /// <summary>
-    /// Invoke JavaScript function to modify the content controls and give some decoration colors and info texts.
-    /// </summary>
-    internal async Task ModifyContentControls() =>
-        await JSModule.InvokeVoidAsync("modifyContentControls");
-
-    /// <summary>
-    /// Invoke JavaScript function to register events in case the content controls are deleted, or the selection was changed.
-    /// </summary>
-    internal async Task RegisterContentControlsEvents() =>
-        await JSModule.InvokeVoidAsync("registerEvents");
-
-    /// <summary>
-    /// Invoke JavaScript function to revoke registration, remove event handlers from the content controls.
-    /// </summary>
-    internal async Task DeRegisterContentControlEvents() =>
-        await JSModule.InvokeVoidAsync("deregisterEvents");
-
-    /// <summary>
-    /// Invoke JavaScript function delete the first 'even' content control.
-    /// </summary>
-    internal async Task DeleteContentControl() =>
-        await JSModule.InvokeVoidAsync("deleteContentControl");
-
-    [JSImport("setupDocument", "Index")]
+    [JSImport("setupDocument", "ContentControls")]
     internal static partial Task SetupDocument();
 
-    [JSImport("insertContentControls", "Index")]
+    [JSImport("insertContentControls", "ContentControls")]
     internal static partial Task InsertContentControlsFunction();
 
-    [JSImport("tagContentControls", "Index")]
+    [JSImport("tagContentControls", "ContentControls")]
     internal static partial Task TagContentControlsFunction();
 
-    [JSImport("modifyContentControls", "Index")]
+    [JSImport("modifyContentControls", "ContentControls")]
     internal static partial Task ModifyContentControlsFunction();
 
+    [JSImport("registerEvents", "ContentControls")]
+    internal static partial Task RegisterContentControlsFunction();
+
+    [JSImport("deregisterEvents", "ContentControls")]
+    internal static partial Task DeregisterContentControlsFunction();
+
+    [JSImport("deleteContentControl", "ContentControls")]
+    internal static partial Task DeleteContentControlFunction();
+
+    /// <summary>
+    /// Prepares the Word document by importing the required JavaScript module and setting up content controls.
+    /// This method can be invoked from JavaScript via JSInterop.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     [JSInvokable]
     public static async Task PrepareDocument()
     {
         await JSHost.ImportAsync("ContentControls", "../Pages/ContentControls.razor.js");
+
         await SetupDocument();
         await InsertContentControlsFunction();
         await TagContentControlsFunction();

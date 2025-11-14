@@ -15,7 +15,7 @@
             <FluentLabel Typo="Typography.H1">Controls!</FluentLabel>
         </FluentStack>
 
-        @if (!hostInformation.IsInitialized)
+        @if (!HostInformation)
         {
             <FluentLabel Typo="Typography.H4">
                 Please <FluentAnchor Href="https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins#sideload-an-office-add-in-for-testing" Appearance="Appearance.Hypertext" Target="_blank">sideload</FluentAnchor> your add-in to see app body.
@@ -54,7 +54,7 @@
 
             <FluentLabel Typo="Typography.H5">Deregister content controls for events</FluentLabel>
             <FluentLabel Typo="Typography.Body" Alignment="HorizontalAlignment.Center">Remove the onDeleted and onSelectionChanged event handlers from the content controls.</FluentLabel>
-            <FluentButton OnClick="DeRegisterContentControlEvents" Appearance="Appearance.Accent">Remove event handlers</FluentButton>
+            <FluentButton OnClick="DeregisterContentControlEvents" Appearance="Appearance.Accent">Remove event handlers</FluentButton>
         }
 
     </FluentStack>

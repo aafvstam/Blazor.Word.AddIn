@@ -1,58 +1,61 @@
 /* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
-using Blazor.Word.AddIn.Client.Model;
+using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Blazor.Word.AddIn.Client.Pages;
 
 /// <summary>
 /// Starter class to demo how to insert a paragraph
 /// </summary>
+[SupportedOSPlatform("browser")]
 public partial class Home : ComponentBase
 {
-    private HostInformation hostInformation = new();
+    private bool HostInformation;
 
-    [Inject, AllowNull]
-    private IJSRuntime JSRuntime { get; set; } = default!;
-    private IJSObjectReference JSModule { get; set; } = default!;
+    [JSImport("IsRunningInHost", "Home")]
+    internal static partial Task<bool> OfficeOnReady();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            hostInformation = await JSRuntime.InvokeAsync<HostInformation>("Office.onReady");
+            try
+            {
+                await JSHost.ImportAsync("Home", "../Pages/Home.razor.js");
+                Console.WriteLine($"Imported Home module");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error importing Home module: {ex.Message}");
+            }
+            
+            HostInformation = await OfficeOnReady();
+            Console.WriteLine($"Home HostInformation: {HostInformation}");
 
-            Debug.WriteLine("Hit OnAfterRenderAsync in Home.razor.cs!");
-            Console.WriteLine("Hit OnAfterRenderAsync in Home.razor.cs in Console!");
-            JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/Home.razor.js");
-
-            if (hostInformation.IsInitialized)
+            if (HostInformation)
             {
                 StateHasChanged();
             }
         }
     }
 
-    /// <summary>
-    /// Basic function to invoke inserting a paragraph
-    /// </summary>
-    internal async Task InsertParagraph() =>
-        await JSModule.InvokeVoidAsync("insertParagraph");
-
+    [JSImport("insertParagraph", "Home")]
+    internal static partial Task InsertParagraph();
 
     [JSInvokable]
     public static Task<string> SayHelloHome(string name)
     {
+        Console.WriteLine("Invoking SayHelloHome");
         return Task.FromResult($"Hello Home, {name} from Home Page!");
     }
 
     [JSInvokable]
     public static Task<string> PreloaderDummy()
     {
+        Console.WriteLine("Invoking PreloaderDummy");
         return Task.FromResult("Loaded");
     }
 }
