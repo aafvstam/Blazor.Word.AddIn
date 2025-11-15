@@ -1,6 +1,9 @@
 ﻿/* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
+
+using Blazor.Word.AddIn.Client.Services;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -10,9 +13,6 @@ namespace Blazor.Word.AddIn.Client.Pages;
 public partial class ContentControls : ComponentBase
 {
     private bool HostInformation;
-
-    [JSImport("IsRunningInHost", "ContentControls")]
-    internal static partial Task<bool> OfficeOnReady();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -28,8 +28,9 @@ public partial class ContentControls : ComponentBase
                 Console.WriteLine($"Error importing ContentControls module: {ex.Message}");
             }
 
-            HostInformation = await OfficeOnReady();
-            
+            HostInformation = await OfficeUtilities.IsRunningInHostAsync();
+            Console.WriteLine($"Home HostInformation: {HostInformation}");
+
             if (HostInformation)
             {
                 StateHasChanged();

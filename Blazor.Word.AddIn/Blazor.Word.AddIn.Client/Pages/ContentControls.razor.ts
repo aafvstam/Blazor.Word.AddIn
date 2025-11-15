@@ -1,39 +1,6 @@
 /* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
 
 /**
- * Checks if the add-in is running in Microsoft Word host application.
- * @returns {Promise<boolean>} A promise that resolves to true if running in Word, false otherwise.
- */
-export async function IsRunningInHost(): Promise<boolean> {
-    console.log("We are now entering function: IsRunningInHost");
-
-    return new Promise<boolean>((resolve, reject) => {
-        try {
-            Office.onReady((info) => {
-                try {
-                    // Check that we loaded into Word.
-                    if (info.host === Office.HostType.Word) {
-                        console.log("We are hosting in Word.");
-                        resolve(true);
-                    }
-                    else {
-                        console.log("We are not hosting in Word.");
-                        resolve(false);
-                    }
-                    console.log("Office onReady completed.");
-                } catch (error) {
-                    console.error("Error in Office.onReady callback:", error);
-                    reject(error);
-                }
-            });
-        } catch (error) {
-            console.error("Error initializing Office:", error);
-            reject(error);
-        }
-    });
-}
-
-/**
  * Step 1: Add some paragraphs to the document
  */
 export async function setupDocument() {
@@ -61,11 +28,12 @@ export async function setupDocument() {
 
 /**
  * ContentControlAdded event handler
- * @param  {} args
+ * @param  {} _args
  */
-async function handleContentControlAdded(args: any) {
+async function handleContentControlAdded(_args: any) {
   console.log("Content control added!");
 }
+
 /**
  * Step 2: Create content controls from the paragraphs
  */
