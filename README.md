@@ -11,7 +11,7 @@ extensions:
   contentType: samples
   technologies: 
     - Add-ins
-  createdDate: '02/21/2025 10:00:00 PM'
+  createdDate: '12/10/2025 10:00:00 PM'
 description: 'Create a Hybrid Blazor Word add-in showcasing some samples.'
 ---
 

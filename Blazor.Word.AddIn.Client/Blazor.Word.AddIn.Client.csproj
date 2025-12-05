@@ -34,6 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Exclude node_modules from TypeScript compilation tracking to prevent timestamp issues -->
+    <TypeScriptCompile Remove="node_modules/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Exclude npm files from output directory - they're only needed at build time -->
+    <Content Remove="package.json" />
+    <Content Remove="package-lock.json" />
+    <Content Remove="node_modules\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.1" />
@@ -46,10 +58,27 @@
   </ItemGroup>
 
   <!-- Incremental, reproducible npm restore -->
-  <Target Name="NpmRestore" BeforeTargets="Build" Inputs="package-lock.json" Outputs="node_modules/.package-lock.stamp" Condition="Exists('package.json')">
-    <Message Importance="high" Text="Running npm ci (only when package-lock.json changes)..." />
-    <Exec Command="npm ci" />
-    <Touch Files="node_modules/.package-lock.stamp" AlwaysCreate="true" />
+  <Target Name="NpmRestore" BeforeTargets="BeforeBuild;ResolveReferences" Condition="Exists('package.json')">
+    <PropertyGroup>
+      <NpmStampFile>node_modules/.package-lock.stamp</NpmStampFile>
+    </PropertyGroup>
+    
+    <!-- Check if npm restore is needed -->
+    <PropertyGroup>
+      <!-- Always restore if stamp doesn't exist -->
+      <NpmRestoreNeeded Condition="!Exists('$(NpmStampFile)')">true</NpmRestoreNeeded>
+      
+      <!-- Check if package-lock.json is newer than stamp (only if both exist) -->
+      <_PackageLockTime Condition="Exists('package-lock.json') AND Exists('$(NpmStampFile)')">$([System.IO.File]::GetLastWriteTime('package-lock.json').Ticks)</_PackageLockTime>
+      <_StampTime Condition="Exists('package-lock.json') AND Exists('$(NpmStampFile)')">$([System.IO.File]::GetLastWriteTime('$(NpmStampFile)').Ticks)</_StampTime>
+      <NpmRestoreNeeded Condition="'$(_PackageLockTime)' != '' AND '$(_StampTime)' != '' AND $(_PackageLockTime) &gt; $(_StampTime)">true</NpmRestoreNeeded>
+    </PropertyGroup>
+    
+    <!-- Run npm ci if needed -->
+    <Message Importance="high" Text="Running npm ci (package-lock.json updated or first build)..." Condition="'$(NpmRestoreNeeded)' == 'true'" />
+    <Exec Command="npm ci" Condition="'$(NpmRestoreNeeded)' == 'true'" ConsoleToMSBuild="true" />
+    <Touch Files="$(NpmStampFile)" AlwaysCreate="true" Condition="'$(NpmRestoreNeeded)' == 'true'" />
+    <Message Importance="low" Text="Skipping npm ci - packages are up to date" Condition="'$(NpmRestoreNeeded)' != 'true'" />
   </Target>
 
 </Project>

@@ -1,4 +1,6 @@
-/* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
+ï»¿/* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
+
+/// <reference types="office-js-preview" />
 
 /**
  * Basic function to show how to insert a table into a Word document.
@@ -19,32 +21,27 @@ export async function createWeatherTable(forecasts: any[]) {
             const title = body.insertParagraph("Weather Forecast", Word.InsertLocation.end);
             title.styleBuiltIn = Word.BuiltInStyleName.title;
 
-            // Create a table with headers: Date, Temp (C), Temp (F), Summary
-            // Add 1 for header row + number of forecast rows
-            const table = body.insertTable(forecasts.length + 1, 4, Word.InsertLocation.end);
+            // Create table data: header row + data rows
+            const table = body.insertTable(
+                forecasts.length + 1, 
+                4, 
+                Word.InsertLocation.end, 
+                [
+                    ["Date", "Temp (Â°C)", "Temp (Â°F)", "Summary"],
+                    ...forecasts.map(f => [
+                        f.date,
+                        f.temperatureC.toString(),
+                        f.temperatureF.toString(),
+                        f.summary || ""
+                    ])
+                ]
+            );
             table.styleBuiltIn = Word.BuiltInStyleName.gridTable5Dark_Accent1;
-
-            // Set header row
-            const headerRow = table.rows.getFirst();
-            headerRow.cells.getItem(0).value = "Date";
-            headerRow.cells.getItem(1).value = "Temp (°C)";
-            headerRow.cells.getItem(2).value = "Temp (°F)";
-            headerRow.cells.getItem(3).value = "Summary";
-
-            // Populate data rows
-            for (let i = 0; i < forecasts.length; i++) {
-                const row = table.rows.getItem(i + 1);
-                const forecast = forecasts[i];
-
-                row.cells.getItem(0).value = forecast.date;
-                row.cells.getItem(1).value = forecast.temperatureC.toString();
-                row.cells.getItem(2).value = forecast.temperatureF.toString();
-                row.cells.getItem(3).value = forecast.summary || "";
-            }
 
             // Add some spacing after the table
             body.insertParagraph("", Word.InsertLocation.end);
 
+            // Single sync to commit all changes
             await context.sync();
             console.log("Weather Forecast table created successfully.");
         });
