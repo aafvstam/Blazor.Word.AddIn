@@ -6,18 +6,19 @@ products:
   - office-word
 languages:
   - javascript
+  - typescript
   - C#
 extensions:
   contentType: samples
-  technologies: 
+  technologies:
     - Add-ins
-  createdDate: '12/10/2025 10:00:00 PM'
-description: 'Create a Hybrid Blazor Word add-in showcasing some samples.'
+  createdDate: "12/05/2025 10:00:00 PM"
+description: "Create a Hybrid Blazor Word add-in showcasing some samples."
 ---
 
 # Create a Hybrid Blazor Word add-in
 
-This sample shows how to build a Word add-in using .NET Blazor Hybrid technologies. Blazor Webassembly allows you to build Office Add-ins using .NET, C#, and JavaScript to interact with the Office JS API. The add-in uses JavaScript to work with the document and Office JS APIs, but you build the user interface and all other non-Office interactions in C# and .NET Core Blazor technologies.
+This sample shows how to build a Word add-in using .NET Blazor Hybrid technologies. Blazor WebAssembly allows you to build Office Add-ins using .NET, C#, and JavaScript to interact with the Office JS API. The add-in uses JavaScript to work with the document and Office JS APIs, but you build the user interface and all other non-Office interactions in C# and .NET Core Blazor technologies.
 
 - Work with Hybrid Blazor Webassembly in the context of Office.
 - Build cross-platform Office Add-ins using Hybrid Blazor, C# and JavaScript Interop.
@@ -46,37 +47,46 @@ This sample shows how to build a Word add-in using .NET Blazor Hybrid technologi
 1. Try out the custom buttons on the **Sample Add-in** tab on the ribbon.
 
 ## Understand an Office Add-in in a Hybrid Blazor Context
-An Office Add-in is a web application that extends Office with additional functionality for the user. For example, an add-in can add ribbon buttons, a task pane, or a content pane with the functionality you want. Because an Office Add-in is a web application, you must provide a web server to host the files.  
 
-Building the Office Add-in as a Hybrid Blazor Application it allows you to build a .NET Core compliant website that interacts with the Office JS APIs using WebAssembly. If your background is with VBA, VSTO, or COM add-in development, you may find that building Office Add-ins using Hybrid Blazor is a familiar development technique.  
+An Office Add-in is a web application that extends Office with additional functionality for the user. For example, an add-in can add ribbon buttons, a task pane, or a content pane with the functionality you want. Because an Office Add-in is a web application, you must provide a web server to host the files.
 
-By using Hybrid Blazor, you can select which parts of your add-in you want to build in C# and which parts you want to build in JavaScript. This allows you to leverage the strengths of both languages and build a more robust add-in that can run parts that need a higher security level at the server and only bring the parts that interact with Office to the client.  
+Building the Office Add-in as a Hybrid Blazor Application it allows you to build a .NET Core compliant website that interacts with the Office JS APIs using WebAssembly. If your background is with VBA, VSTO, or COM add-in development, you may find that building Office Add-ins using Hybrid Blazor is a familiar development technique.
 
-This sample also implemented the Blazor Fluent UI components to show how you can use the Fluent UI components in your add-in. The Blazor Fluent UI components are a set of UI components that implement the Fluent Design System. The Fluent UI components contains options to easily implement Themes to your Add-in. To switch between themes select the Theme option in the Ribbon, or the Theme option in the task pane menu.   
+By using Hybrid Blazor, you can select which parts of your add-in you want to build in C# and which parts you want to build in TypeScript. This allows you to leverage the strengths of both languages and build a more robust add-in that can run parts that need a higher security level at the server and only bring the parts that interact with Office to the client.
 
-This sample also implemented TypeScript as a language to interact with the Office JS API. TypeScript is a superset of JavaScript that compiles to plain JavaScript. TypeScript is designed for the development of large applications and can be used to develop Office Add-ins. TypeScript is a language that is easy to learn and can be used to build Office Add-ins that interact with the Office JS API. TypeScript allows you to develop strong typed code that can detect compile issues before the code is deployed where often JavaScript issues only are discovered at runtime in production.  
+This sample also implemented the Blazor Fluent UI components to show how you can use the Fluent UI components in your add-in. The Blazor Fluent UI components are a set of UI components that implement the Fluent Design System. The Fluent UI components contains options to easily implement Themes to your Add-in. To switch between themes select the Theme option in the Ribbon, or the Theme option in the task pane menu.
+
+This sample also implemented TypeScript as a language to interact with the Office JS API. TypeScript is a superset of JavaScript that transpiles to plain JavaScript. TypeScript is designed for the development of large applications and can be used to develop Office Add-ins. TypeScript is a language that is easy to learn and can be used to build Office Add-ins that interact with the Office JS API. TypeScript allows you to develop strong typed code that can detect compile-time issues before the code is deployed where often JavaScript issues only are discovered at runtime in production.
 
 ## Key parts of this sample
-This sample runs a Hybrid Blazor Application that  runs cross-platform in various browsers supporting WASM (Webassembly). The part that is using WebAssembly demonstrates some basic Word functions using the Document.
+
+This sample runs a Hybrid Blazor Application that runs cross-platform in various browsers supporting WASM (WebAssembly). The part that is using WebAssembly demonstrates some basic Word functions using the Document.
 
 The purpose of this sample is to show you how to build and interact with the Blazor, C# and JavaScript Interop options. If you're looking for more examples of interacting with Word and Office JS APIs, see [Script Lab](https://aka.ms/getscriptlab).
 
 ### Blazor pages
-The **Pages** folder contains the Blazor pages, and is based on the generic Blazor demo application provided in Visual Studio. It contains similar pages such as Home, Counter and Weather. The Home page is implemented as **Home.razor**. As pages can run both on the Server side or the Client side they can be defined in either the Add-in project or the Client project.  
+
+The **Pages** folder contains the Blazor pages, and is based on the generic Blazor demo application provided in Visual Studio. It contains similar pages such as Home, Counter and Weather. The Home page is implemented as **Home.razor**. As pages can run both on the Server side or the Client side they can be defined in either the Add-in project or the Client project.
 
 Each **.razor** page can contain code-behind pages, for example, named **Home.razor.cs** and **Home.razor.ts**. The C# file first establishes an interop connection with the JavaScript file (generated by TypeScript).
 
 ```csharp
 protected override async Task OnAfterRenderAsync(bool firstRender)
 {
-  if (firstRender)
+  try
   {
-    JSModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/Home.razor.js");
+      await JSHost.ImportAsync("Home", "../Pages/Home.razor.js");
+      Console.WriteLine($"Imported Home module");
+  }
+  catch (Exception ex)
+  {
+      Console.WriteLine($"Error importing Home module: {ex.Message}");
   }
 }
 ```
 
-##### TODO - Implement TypeScript Interop Functions
+##### Implement TypeScript Interop Functions
+
 For any events that need to interact with the Office document, the C# file calls through interop to the JavaScript (generated by TypeScript) file.
 
 ```csharp
@@ -86,18 +96,23 @@ private async Task InsertParagraph() =>
 
 The JavaScript runs the code to interact with the document and returns.
 
-```javascript
-export function insertParagraph() {
-  return Word.run((context) => {
-    // insert a paragraph at the start of the document.
-    const paragraph = context.document.body.insertParagraph(
-      'Hello World from Blazor',
-      Word.InsertLocation.start
-    );
+```TypeScript
+export async function insertParagraph() {
 
-    // sync the context to run the previous API call, and return.
-    return context.sync();
-  });
+    console.log("We are now entering function: insertParagraph");
+
+    try {
+        await Word.run(async function (context) {
+
+            // Inserts a paragraph at the start of the document.
+            context.document.body.insertParagraph(
+                "Hello World from Blazor",
+                Word.InsertLocation.start
+            );
+        });
+    } catch (error) {
+        console.error("Error creating welcome home: ", error);
+    }
 }
 ```
 
@@ -108,10 +123,13 @@ The fundamental pattern includes the following steps.
 1. Call Office JS APIs to interact with the document from JavaScript code.
 
 ### Blazor interop with Add-in Commands
+
 This sample shows how to use Blazor with custom buttons on the ribbon. The buttons call the same functions that are defined on the task pane. This sample is configured to use the shared runtime which is required for this interop to work correctly.
 
 ## Debugging
+
 ##### TODO - Add more content here
+
 This sample is configured to support debugging both JavaScript and C# files. New Blazor projects need the following file updates to support C# debugging.
 
 1. In the **launchSettings.json** file of the web project, make sure all instances of `launchBrowser` are set to `false`.
@@ -129,6 +147,64 @@ This sample is configured to support debugging both JavaScript and C# files. New
 </Project>
 ```
 
+## How to use in VS Code
+
+This repo includes VS Code task and launch configurations under the `.vscode` folder to build, run, sideload and debug the add-in from VS Code.
+
+- Build and restore (tasks or CLI):
+
+```powershell
+dotnet restore .\Blazor.Word.AddIn.sln
+dotnet build .\Blazor.Word.AddIn.sln -c Debug
+```
+
+- Run the server, sideload the add-in, and attach the debugger (recommended):
+
+  - Open the Run view in VS Code and select the `Sideload & Attach (server)` configuration, then press F5.
+  - That configuration runs a composite pre-launch task named `Start: Server & Sideload` which performs the sequence below:
+    - Starts the `Run: Server` task as a background process (`dotnet run` for the `Blazor.Word.AddIn` project).
+    - Waits for the server to signal readiness (background problem matcher).
+    - Runs the `Sideload: start-local` task (which executes `npm run start-local` in the `Blazor.Word.AddIn` folder) to sideload the manifest into Word.
+  - After the pre-launch task finishes, VS Code will prompt you to pick the running `.NET` process to attach the debugger to — choose the `Blazor.Word.AddIn` process.
+  - This flow ensures the server is up before sideloading runs and avoids starting a second server instance (prevents port-binding conflicts).
+
+- Useful task names (in `.vscode/tasks.json`):
+
+  - `dotnet: Restore`
+  - `dotnet: Build Solution`
+  - `Run: Server` (background)
+  - `Sideload: start-local` (runs `npm run start-local` in `Blazor.Word.AddIn`)
+  - `npm: Install (server)`
+  - `npm: Dev Server (client)`
+
+Cross-platform note:
+
+- The examples use PowerShell for Windows. On macOS/Linux use equivalent POSIX shell commands (replace backslashes with forward slashes). Sideload behavior and Office client interaction differ by platform; consult Microsoft documentation for platform specifics.
+
+Troubleshooting
+
+- Port already in use:
+
+  - Check which process is using the default port (7215) and stop it if safe.
+
+  ```powershell
+  netstat -ano | Select-String 7215
+  Stop-Process -Id <pid>  # if safe to stop
+  ```
+
+  ```bash
+  lsof -i :7215
+  kill <pid>
+  ```
+
+- Sideload runs only after server exit (ordering issue):
+
+  - Use the provided `Start: Server & Sideload` composite task (defined in `.vscode/tasks.json`) and the `Sideload & Attach (server)` launch compound. `Run: Server` is a background task with a problem matcher that detects readiness; `Sideload: start-local` runs afterwards. If `start-local` needs an HTTP endpoint to be responsive, add a wrapper that polls the server before executing `npm run start-local`.
+
+- Attach prompts to pick a process:
+
+  - The attach-based workflow intentionally asks you to pick the running `.NET` process so the debugger attaches to the already-running server (avoids starting a second server and port conflicts). If you want full automation, consider a helper that writes the PID to a temporary file and a small installed helper command to read it into `launch.json`.
+
 ## Questions and feedback
 
 - Did you experience any problems with the sample? [Create an issue](https://github.com/OfficeDev/Office-Add-in-samples/issues/new/choose) and we'll help you out.
@@ -137,17 +213,18 @@ This sample is configured to support debugging both JavaScript and C# files. New
 
 ## Solution
 
-| Solution                                 | Authors                                                                 |
-| ---------------------------------------- | ----------------------------------------------------------------------- |
+| Solution                           | Authors                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------- |
 | Create a Blazor Hybrid Word add-in | [Maarten van Stam](https://mvp.microsoft.com/en-us/PublicProfile/33535) |
 
 ## Version history
 
-| Version | Date                | Comments           |
-| ------- | ------------------- | ------------------ |
-| 1.0     | XXXXXXXX XX, 2025   | Work In Progress   |
+| Version | Date              | Comments         |
+| ------- | ----------------- | ---------------- |
+| 1.0     | XXXXXXXX XX, 2025 | Work In Progress |
 
 ## Extra Credits
+
 Additional contributions to this sample were made by [Rudy Cortembert](https://github.com/RudyCo/MyAspireBlazorAddIn).  
 Rudy adopted our earlier Blazor Add-in sample and helped to made it work with the new Blazor Hybrid model.
 
@@ -160,6 +237,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 **Note**: The index.html file contains an image URL that tracks diagnostic data for this sample add-in. Please remove the image tag if you reuse this sample in your own code project.
 
 **TO DO: Update the image URL below with the correct telemetry URL.**
-<!-- 
-    <img src="https://pnptelemetry.azurewebsites.net/pnp-officeaddins/samples/blazor-add-in/word-blazor-hybrid-add-in" /> 
+
+<!--
+    <img src="https://pnptelemetry.azurewebsites.net/pnp-officeaddins/samples/blazor-add-in/word-blazor-hybrid-add-in" />
 -->

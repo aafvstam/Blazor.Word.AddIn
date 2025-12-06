@@ -20,8 +20,8 @@
 		<ProjectReference Include="..\Blazor.Word.AddIn.Client\Blazor.Word.AddIn.Client.csproj" />
 		
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.2" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.2" />
 	</ItemGroup>
 
   <ItemGroup>
