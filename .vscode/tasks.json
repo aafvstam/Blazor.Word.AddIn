@@ -39,7 +39,7 @@
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
       },
-      "presentation": { "panel": "shared", "clear": false },
+      "presentation": { "panel": "dedicated", "clear": false },
       "problemMatcher": {
         "owner": "dotnet-server-ready",
         "pattern": {
@@ -59,25 +59,37 @@
       "args": ["run", "start-local"],
       "options": { "cwd": "${workspaceFolder}/Blazor.Word.AddIn" },
       "dependsOn": ["Run: Server"],
-      "presentation": { "panel": "shared", "clear": false },
+      "presentation": { "panel": "dedicated", "clear": false },
       "problemMatcher": []
     },
     {
-      "label": "npm: Install (server)",
+      "label": "npm: Install (Blazor Server)",
       "type": "shell",
       "command": "npm",
       "args": ["install"],
       "options": { "cwd": "${workspaceFolder}/Blazor.Word.AddIn" },
-      "presentation": { "panel": "shared", "clear": false },
+      "presentation": { "panel": "dedicated", "clear": false },
       "problemMatcher": []
     },
     {
-      "label": "npm: Dev Server (client)",
+      "label": "npm: Install (Blazor Client)",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "dev-server"],
+      "args": ["install"],
       "options": { "cwd": "${workspaceFolder}/Blazor.Word.AddIn.Client" },
-      "presentation": { "panel": "dedicated", "clear": true },
+      "presentation": { "panel": "dedicated", "clear": false },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: Install (All)",
+      "type": "shell",
+      "command": "echo Installing all npm dependencies",
+      "dependsOn": [
+        "npm: Install (Blazor Server)",
+        "npm: Install (Blazor Client)"
+      ],
+      "dependsOrder": "parallel",
+      "presentation": { "panel": "dedicated", "clear": false },
       "problemMatcher": []
     },
     {
