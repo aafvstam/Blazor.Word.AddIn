@@ -168,14 +168,35 @@ dotnet build .\Blazor.Word.AddIn.sln -c Debug
   - After the pre-launch task finishes, VS Code will prompt you to pick the running `.NET` process to attach the debugger to — choose the `Blazor.Word.AddIn` process.
   - This flow ensures the server is up before sideloading runs and avoids starting a second server instance (prevents port-binding conflicts).
 
-- Useful task names (in `.vscode/tasks.json`):
+### Useful task names (in `.vscode/tasks.json`):
 
-  - `dotnet: Restore`
-  - `dotnet: Build Solution`
-  - `Run: Server` (background)
-  - `Sideload: start-local` (runs `npm run start-local` in `Blazor.Word.AddIn`)
-  - `npm: Install (server)`
-  - `npm: Dev Server (client)`
+- `dotnet: Restore`
+- `dotnet: Build Solution`
+- `Start: Server & Sideload` (sequences `Run: Server` then `Sideload: start-local`)
+- `Run: Server` (background — runs `dotnet run` for the `Blazor.Word.AddIn` project)
+- `Sideload: start-local` (runs `npm run start-local` in `Blazor.Word.AddIn`)
+- `npm: Install (All)` (composite: runs both installs in parallel)
+- `npm: Install (Blazor Server)` (runs `npm install` in the server folder)
+- `npm: Install (Blazor Client)` (runs `npm install` in the client folder)
+
+Terminal behavior:
+
+- The server, sideload and npm install tasks are configured to run in dedicated VS Code terminal panels so their outputs remain separated and easier to monitor.
+- Use the Command Palette (`Ctrl+Shift+P`) → `Tasks: Run Task` and pick the task you want to run. The `Start: Server & Sideload` composite is convenient for the full flow.
+
+Example (PowerShell) — install all npm deps then start the full flow manually:
+
+```powershell
+# install all npm deps (runs two installs in parallel via the composite task)
+npm --prefix .\Blazor.Word.AddIn install
+npm --prefix .\Blazor.Word.AddIn.Client install
+
+# start server (runs in dedicated terminal)
+dotnet run --project .\Blazor.Word.AddIn\Blazor.Word.AddIn.csproj
+
+# sideload (run in another dedicated terminal after server is ready)
+npm --prefix .\Blazor.Word.AddIn run start-local
+```
 
 Cross-platform note:
 
