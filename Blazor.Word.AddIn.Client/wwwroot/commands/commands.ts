@@ -17,7 +17,7 @@ async function insertTextInWord(event: Office.AddinCommands.Event): Promise<void
   try {
     await Word.run(async (context) => {
       const body = context.document.body;
-      body.insertText("Hello World", Word.InsertLocation.end);
+      body.insertText("Hello World from TypeScript", Word.InsertLocation.end);
       await context.sync();
     });
   } catch (error) {
@@ -44,17 +44,17 @@ async function insertTextInWord(event: Office.AddinCommands.Event): Promise<void
 async function callBlazorOnHome(event: Office.AddinCommands.Event): Promise<void> {
 
   try {
-    
+
     console.log("Running callBlazorOnHome");
     await callStaticLocalComponentMethodinit("SayHelloHome");
 
   } catch (error) {
-    
+
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Error in callBlazorOnHome:", errorMessage);
 
   } finally {
-    
+
     console.log("Finish callBlazorOnHome");
   }
 
@@ -74,7 +74,7 @@ async function callBlazorOnHome(event: Office.AddinCommands.Event): Promise<void
  */
 async function callBlazorOnCounter(event: Office.AddinCommands.Event): Promise<void> {
   try {
-    
+
     console.log("Running callBlazorOnCounter");
     await callStaticLocalComponentMethodinit("SayHelloCounter");
 
@@ -84,7 +84,7 @@ async function callBlazorOnCounter(event: Office.AddinCommands.Event): Promise<v
     console.error("Error in callBlazorOnCounter:", errorMessage);
 
   } finally {
-    
+
     console.log("Finish callBlazorOnCounter");
   }
 
@@ -102,7 +102,7 @@ async function callBlazorOnCounter(event: Office.AddinCommands.Event): Promise<v
  * @returns {Promise<void>} A promise that resolves when the operation is complete.
  */
 async function callStaticLocalComponentMethodinit(methodname: string): Promise<void> {
-  
+
   console.log("In callStaticLocalComponentMethodinit");
 
   try {
@@ -111,7 +111,11 @@ async function callStaticLocalComponentMethodinit(methodname: string): Promise<v
     try {
       const dotnetloaded = await preloadDotNet();
 
+      name = "something";
+
       if (dotnetloaded === true) {
+
+        name = "Dotnet Loaded";
         // Call JSInvokable Function here ...
         name = await DotNet.invokeMethodAsync(
           "Blazor.Word.AddIn.Client",
@@ -143,57 +147,37 @@ async function callStaticLocalComponentMethodinit(methodname: string): Promise<v
 }
 
 /**
- * Local function to preload the .NET runtime and ensure it is ready for use.
- *
- * This function attempts to invoke a dummy method in the .NET runtime to check if it is loaded.
- * It retries up to 5 times with a 1-second delay between attempts if the runtime is not loaded.
- *
- * This won't be necessary if the task pane is automatically opened when the add-in is loaded.
- * Also feel it should be possible to preload in the module.ts file for a guaranteed load.
- *
- * @returns {Promise<boolean>} Returns true if the .NET runtime is successfully loaded, otherwise false.
+ * Waits for the .NET runtime to be ready.
+ * 
+ * Uses a promise-based approach where the Blazor module signals readiness
+ * via afterWebAssemblyStarted, eliminating the need for polling.
+ * 
+ * @param timeoutMs - Maximum time to wait for .NET to be ready (default: 10000ms)
+ * @returns {Promise<boolean>} Returns true if the .NET runtime is ready, false if timeout.
  */
-async function preloadDotNet(): Promise<boolean> {
+async function preloadDotNet(timeoutMs: number = 10000): Promise<boolean> {
   console.log("In preloadDotNet");
 
   try {
-    console.log("Before DotNet.invokeMethodAsync");
-    let result = "";
+    const dotNetReadyPromise = (window as any).dotNetReady;
 
-    // Attempt to invoke the dummy method up to 5 times
-    let attempts = 0;
-    const maxAttempts = 5;
-    const retryDelayMs = 1000;
-
-    while (result === "" && attempts < maxAttempts) {
-      try {
-        // Wait before retry (skip on first attempt)
-        if (attempts > 0) {
-          await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
-        }
-
-        // Attempt to invoke the PreloaderDummy method
-        result = await DotNet.invokeMethodAsync(
-          "Blazor.Word.AddIn.Client",
-          "PreloaderDummy"
-        );
-
-        console.log(result);
-
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error("Error during DotNet invocation: " + errorMessage);
-      }
-
-      attempts++;
+    if (!dotNetReadyPromise) {
+      console.error("dotNetReady promise not found - Blazor module may not be loaded");
+      return false;
     }
 
-    console.log("After DotNet.invokeMethodAsync");
-    return result === "Loaded";
+    // Race between the ready promise and a timeout
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout waiting for .NET runtime")), timeoutMs)
+    );
+
+    await Promise.race([dotNetReadyPromise, timeoutPromise]);
+    console.log(".NET runtime is ready");
+    return true;
 
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.log("Error call: " + errorMessage);
+    console.error("Error in preloadDotNet: " + errorMessage);
     return false;
 
   } finally {
@@ -213,7 +197,7 @@ async function callBlazorPrepareDocument(event: Office.AddinCommands.Event): Pro
     // Ensure .NET runtime is loaded
     const dotnetloaded = await preloadDotNet();
 
-    console.log( "Running callBlazorPrepareDocument, preload: " + dotnetloaded);
+    console.log("Running callBlazorPrepareDocument, preload: " + dotnetloaded);
 
     if (dotnetloaded === true) {
       // Call the JSInvokable PrepareDocument method

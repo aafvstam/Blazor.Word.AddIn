@@ -1,13 +1,10 @@
 /* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
-
 console.log("Loading Home.razor.ts");
 
 /**
  * Basic function to show how to insert a paragraph at the start of the Word document
  * and a picture ot the end of the Word document.
  */
-console.log("Loading Home.razor.ts");
-
 export async function insertParagraph() {
 
   console.log("We are now entering function: insertParagraph");
