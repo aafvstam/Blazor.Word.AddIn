@@ -113,7 +113,7 @@ async function callStaticLocalComponentMethodinit(methodname: string): Promise<v
 
       name = "something";
 
-      if (dotnetloaded === true) {
+      if (dotnetloaded === true) {  
 
         name = "Dotnet Loaded";
         // Call JSInvokable Function here ...

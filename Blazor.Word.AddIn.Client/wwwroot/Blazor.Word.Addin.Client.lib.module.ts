@@ -4,7 +4,7 @@
 // Promise that resolves when .NET runtime AND Client assembly are ready
 let resolveDotNetReady: () => void;
 const dotNetReadyPromise = new Promise<void>((resolve) => {
-    resolveDotNetReady = resolve;
+  resolveDotNetReady = resolve;
 });
 
 // Expose to window for commands.ts to await
@@ -12,8 +12,8 @@ const dotNetReadyPromise = new Promise<void>((resolve) => {
 
 // Function called by WasmPreloader component when WebAssembly runtime and assembly are ready
 (window as any).signalDotNetReady = () => {
-    console.log("signalDotNetReady: WebAssembly runtime and Client assembly are now ready");
-    resolveDotNetReady();
+  console.log("signalDotNetReady: WebAssembly runtime and Client assembly are now ready");
+  resolveDotNetReady();
 };
 
 /**
@@ -34,7 +34,6 @@ const dotNetReadyPromise = new Promise<void>((resolve) => {
 
 console.log("Loading Blazor.Word.AddIn.Client.lib.module.js");
 
-
 /***
  * JavaScript initializers
  * https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/startup?preserve-view=true#javascript-initializers
@@ -49,26 +48,26 @@ console.log("Loading Blazor.Word.AddIn.Client.lib.module.js");
  * @param  {} extensions
  */
 export async function beforeWebAssemblyStart(options: any, extensions: any) {
-    console.log("We are now entering function: beforeWebAssemblyStart");
+  console.log("We are now entering function: beforeWebAssemblyStart");
 
-    Office.onReady((info) => {
-        // Check that we loaded into Word.
-        if (info.host === Office.HostType.Word) {
+  Office.onReady((info) => {
+    // Check that we loaded into Word.
+    if (info.host === Office.HostType.Word) {
 
-            console.log("We are now hosting in Word.");
+      console.log("We are now hosting in Word.");
 
-            // Set the startup behavior of the add-in so that it loads whenever the Word document is loaded.
-            Office.addin.setStartupBehavior(Office.StartupBehavior.load);
+      // Set the startup behavior of the add-in so that it loads whenever the Word document is loaded.
+      Office.addin.setStartupBehavior(Office.StartupBehavior.load);
 
-            // Register an event handler for the onChanged event.
-            Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, onChange);
-            console.log("A handler has been registered for the onChanged event.");
-        }
-        else {
-            console.log("We are now hosting in The Browser (of your choice).");
-        }
-        console.log("Office onReady.");
-    });
+      // Register an event handler for the onChanged event.
+      Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, onChange);
+      console.log("A handler has been registered for the onChanged event.");
+    }
+    else {
+      console.log("We are now hosting in The Browser (of your choice).");
+    }
+    console.log("Office onReady.");
+  });
 }
 
 /**
@@ -77,7 +76,7 @@ export async function beforeWebAssemblyStart(options: any, extensions: any) {
  * @param event The event information from Word
  */
 async function onChange(event: any) {
-    console.log("Change type of event: " + event.type);
+  console.log("Change type of event: " + event.type);
 }
 
 /**
@@ -89,7 +88,7 @@ async function onChange(event: any) {
  * @param  {} options
  */
 export async function beforeWebStart(options: any) {
-    console.log("We are now entering function: beforeWebStart");
+  console.log("We are now entering function: beforeWebStart");
 }
 
 /**
@@ -101,7 +100,7 @@ export async function beforeWebStart(options: any) {
  * @param  {} extensions
  */
 export async function beforeServerStart(options: any, extensions: any) {
-    console.log("We are now entering function: beforeServerStart");
+  console.log("We are now entering function: beforeServerStart");
 }
 
 /**
@@ -113,7 +112,7 @@ export async function beforeServerStart(options: any, extensions: any) {
  * @param  {} blazor
  */
 export async function afterWebStarted(blazor: any) {
-    console.log("We are now entering function: afterWebStarted");
+  console.log("We are now entering function: afterWebStarted");
 }
 
 /**
@@ -123,7 +122,7 @@ export async function afterWebStarted(blazor: any) {
  * @param  {} blazor
  */
 export async function afterServerStarted(blazor: any) {
-    console.log("We are now entering function: afterServerStarted");
+  console.log("We are now entering function: afterServerStarted");
 }
 
 /**
@@ -133,10 +132,10 @@ export async function afterServerStarted(blazor: any) {
  * @param  {} blazor
  */
 export async function afterWebAssemblyStarted(blazor: any) {
-    console.log("We are now entering function: afterWebAssemblyStarted");
+  console.log("We are now entering function: afterWebAssemblyStarted");
 
-    // Note: The actual readiness signal is sent by the WasmPreloader component
-    // after it renders, ensuring the Client assembly is fully loaded and scanned
-    // for JSInvokable methods before commands.ts tries to invoke them.
-    console.log("WebAssembly runtime started - waiting for WasmPreloader component to signal readiness");
+  // Note: The actual readiness signal is sent by the WasmPreloader component
+  // after it renders, ensuring the Client assembly is fully loaded and scanned
+  // for JSInvokable methods before commands.ts tries to invoke them.
+  console.log("WebAssembly runtime started - waiting for WasmPreloader component to signal readiness");
 }
