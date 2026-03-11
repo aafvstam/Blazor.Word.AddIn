@@ -1,10 +1,20 @@
 /* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
+
+/**
+ * Basic function to show how to insert a value into a PowerPoint Presentation.
+ */
 console.log("Loading Home.razor.ts");
 
 /**
- * Basic function to show how to insert a paragraph at the start of the Word document
- * and a picture ot the end of the Word document.
+ * Function called from C# via JSImport to generate a greeting.
+ * @param name The name to greet.
+ * @returns A greeting string.
  */
+export function sayHelloFromJs(name: string): string {
+  console.log(`sayHelloFromJs called with name: ${name}`);
+  return `Hello Home, ${name}`;
+}
+
 export async function insertParagraph() {
 
   console.log("We are now entering function: insertParagraph");

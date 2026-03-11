@@ -1,16 +1,15 @@
 /* Copyright(c) Maarten van Stam. All rights reserved. Licensed under the MIT License. */
-using Blazor.Word.AddIn.Client.Model;
-
-using Microsoft.AspNetCore.Components;
-
-using Microsoft.JSInterop;
-
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
+using Blazor.Word.AddIn.Client.Model;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+
 namespace Blazor.Word.AddIn.Client.Pages;
 
-public partial class Weather : ComponentBase
+public partial class Weather : ComponentBase, IAsyncDisposable
 {
     private HostInformation hostInformation = new HostInformation();
 
@@ -73,11 +72,26 @@ public partial class Weather : ComponentBase
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
         var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        forecasts = [.. Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = startDate.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        })];
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (JSModule is not null)
+        {
+            try
+            {
+                await JSModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // Circuit is already gone; JS-side resources are already cleaned up.
+            }
+        }
     }
 }

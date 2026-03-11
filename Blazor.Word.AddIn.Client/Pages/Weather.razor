@@ -1,11 +1,12 @@
 ﻿﻿@* Copyright (c) Maarten van Stam. All rights reserved. Licensed under the MIT License. *@
 
 @page "/weather"
-@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
-
+@rendermode InteractiveServer
 @attribute [StreamRendering]
 
 <PageTitle>Weather</PageTitle>
+
+<RenderModeInfo />
 
 <FluentStack Orientation="Orientation.Vertical">
 

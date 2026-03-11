@@ -282,13 +282,13 @@
                   <bt:Image size="80" resid="Contoso.tpicon_80x80" />
                 </Icon>
 
-                <Control xsi:type="Button" id="Contoso.FunctionButton3">
-                  <Label resid="Contoso.FunctionButton3.Label" />
+                <Control xsi:type="Button" id="Contoso.FunctionButton1">
+                  <Label resid="Contoso.FunctionButton1.Label" />
                   <Supertip>
                     <!-- ToolTip title. resid must point to a ShortString resource. -->
-                    <Title resid="Contoso.FunctionButton3.Label" />
+                    <Title resid="Contoso.FunctionButton1.Label" />
                     <!-- ToolTip description. resid must point to a LongString resource. -->
-                    <Description resid="Contoso.FunctionButton3.Tooltip" />
+                    <Description resid="Contoso.FunctionButton1.Tooltip" />
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="blazor-16" />
@@ -298,7 +298,27 @@
 
                   <!-- This is what happens when the command is triggered (E.g. click on the Ribbon). Supported actions are ExecuteFunction or ShowTaskpane. -->
                   <Action xsi:type="ExecuteFunction">
-                    <FunctionName>callBlazorOnCounter</FunctionName>
+                    <FunctionName>callBlazorServer</FunctionName>
+                  </Action>
+                </Control>
+
+                <Control xsi:type="Button" id="Contoso.FunctionButton3">
+                  <Label resid="Contoso.FunctionButton3.Label" />
+                  <Supertip>
+                    <!-- ToolTip title. resid must point to a ShortString resource. -->
+                    <Title resid="Contoso.FunctionButton3.Label" />
+                    <!-- ToolTip description. resid must point to a LongString resource. -->
+                    <Description resid="Contoso.FunctionButton3.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="webassembly-16" />
+                    <bt:Image size="32" resid="webassembly-32" />
+                    <bt:Image size="80" resid="webassembly-80" />
+                  </Icon>
+
+                  <!-- This is what happens when the command is triggered (E.g. click on the Ribbon). Supported actions are ExecuteFunction or ShowTaskpane. -->
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>callBlazorWasm</FunctionName>
                   </Action>
                 </Control>
 
@@ -426,8 +446,9 @@
         <bt:String id="Contoso.Taskpane.CC.Label" DefaultValue="Content Controls" />
 
         <bt:String id="Contoso.FunctionButton0.Label" DefaultValue="Insert Text" />
+        <bt:String id="Contoso.FunctionButton1.Label" DefaultValue="Insert text from Server" />
         <bt:String id="Contoso.FunctionButton2.Label" DefaultValue="Prepare Document from ContentControls" />
-        <bt:String id="Contoso.FunctionButton3.Label" DefaultValue="Insert Name from Counter" />
+        <bt:String id="Contoso.FunctionButton3.Label" DefaultValue="Insert text from WASM" />
         <bt:String id="Contoso.FunctionButton4.Label" DefaultValue="Insert Name from Home" />
       </bt:ShortStrings>
 
@@ -442,8 +463,9 @@
         <bt:String id="Contoso.Taskpane.CC.Tooltip" DefaultValue="Click to Show Content Controls Taskpane" />
 
         <bt:String id="Contoso.FunctionButton0.Tooltip" DefaultValue="Click to insert text in slide" />
+        <bt:String id="Contoso.FunctionButton1.Tooltip" DefaultValue="Click to do something from Server" />
         <bt:String id="Contoso.FunctionButton2.Tooltip" DefaultValue="Click to Prepare Document" />
-        <bt:String id="Contoso.FunctionButton3.Tooltip" DefaultValue="Click to do something" />
+        <bt:String id="Contoso.FunctionButton3.Tooltip" DefaultValue="Click to insert name from WASM" />
         <bt:String id="Contoso.FunctionButton4.Tooltip" DefaultValue="Click to insert name from Home" />
       </bt:LongStrings>
 
